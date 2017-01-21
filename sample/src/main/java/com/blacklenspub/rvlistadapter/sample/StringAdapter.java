@@ -1,10 +1,11 @@
 package com.blacklenspub.rvlistadapter.sample;
 
-import android.support.v7.util.DiffUtil;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.blacklenspub.rvlistadapter.DiffCalculator;
+import com.blacklenspub.rvlistadapter.OnItemClickListener;
 import com.blacklenspub.rvlistadapter.RvListAdapter;
 
 import org.jetbrains.annotations.NotNull;
@@ -12,12 +13,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
-import kotlin.jvm.functions.Function4;
-
 public class StringAdapter extends RvListAdapter<String, StringHolder> {
-    public StringAdapter(@Nullable List<? extends String> list, @Nullable Function4<? super View, ? super Integer, ? super StringHolder, ? super String, Unit> onItemClick, @Nullable Function2<? super List<? extends String>, ? super List<? extends String>, ? extends DiffUtil.DiffResult> diff) {
+
+    public StringAdapter(@Nullable List<? extends String> list, @Nullable OnItemClickListener<String, StringHolder> onItemClick, @Nullable DiffCalculator<String> diff) {
         super(list, onItemClick, diff);
     }
 

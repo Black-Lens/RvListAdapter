@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.blacklenspub.rvlistadapter.sample", appContext.getPackageName());
+        assertEquals("com.blacklenspub.rvlistadapter.sample.sample", appContext.getPackageName());
     }
 }

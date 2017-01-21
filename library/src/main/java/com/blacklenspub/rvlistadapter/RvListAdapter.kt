@@ -1,6 +1,5 @@
 package com.blacklenspub.rvlistadapter
 
-import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -9,28 +8,26 @@ import kotlin.properties.Delegates
 
 abstract class ItemViewHolder<T : Any, VH>(itemView: View) : RecyclerView.ViewHolder(itemView) {
     lateinit var item: T
-    var onClick: ((view: View, position: Int, holder: VH, item: T) -> Unit)? = null
+    var onClick: OnItemClickListener<T, VH>? = null
 
     init {
         itemView.setOnClickListener { callOnClick(it) }
     }
 
     fun callOnClick(view: View) {
-        onClick?.let {
-            it.invoke(view, adapterPosition, this@ItemViewHolder as VH, item)
-        }
+        onClick?.onItemClick(view, adapterPosition, this@ItemViewHolder as VH, item)
     }
 }
 
 abstract class RvListAdapter<T : Any, VH : ItemViewHolder<T, VH>> @JvmOverloads constructor(
         list: List<T>? = null,
-        val onItemClick: ((view: View, position: Int, holder: VH, item: T) -> Unit)? = null,
-        val diff: ((oldList: List <T>, newList: List<T>) -> DiffUtil.DiffResult)? = null
+        val onItemClick: OnItemClickListener<T, VH>? = null,
+        val diff: DiffCalculator<T>? = null
 ) : RecyclerView.Adapter<VH>() {
 
     var list: List<T> by Delegates.observable(list ?: emptyList(), { kProperty, oldList, newList ->
         if (diff != null) {
-            diff.invoke(oldList, newList).dispatchUpdatesTo(this)
+            diff.getDiffResult(oldList, newList).dispatchUpdatesTo(this)
         } else {
             notifyDataSetChanged()
         }

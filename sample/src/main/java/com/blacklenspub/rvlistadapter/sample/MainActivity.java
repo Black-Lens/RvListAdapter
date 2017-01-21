@@ -9,13 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
+import com.blacklenspub.rvlistadapter.DiffCalculator;
+import com.blacklenspub.rvlistadapter.OnItemClickListener;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import kotlin.Unit;
-import kotlin.jvm.functions.Function2;
-import kotlin.jvm.functions.Function4;
 
 public class MainActivity extends AppCompatActivity {
     StringAdapter adapter;
@@ -27,36 +26,35 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new StringAdapter(
                 Arrays.asList("Harry Potter", "Ron Weasley"),
-                new Function4<View, Integer, StringHolder, String, Unit>() {
+                new OnItemClickListener<String, StringHolder>() {
                     @Override
-                    public Unit invoke(View view, Integer integer, StringHolder stringHolder, String s) {
-                        if (view == stringHolder.text1) {
+                    public void onItemClick(View view, int position, StringHolder holder, String item) {
+                        if (view == holder.text1) {
                             Toast.makeText(MainActivity.this, "text1", Toast.LENGTH_SHORT).show();
-                        } else if (view == stringHolder.text2) {
-                            Toast.makeText(MainActivity.this, "text4", Toast.LENGTH_SHORT).show();
+                        } else if (view == holder.text2) {
+                            Toast.makeText(MainActivity.this, "text2", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(MainActivity.this, s, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, item, Toast.LENGTH_SHORT).show();
                         }
-                        return null;
                     }
                 },
-                new Function2<List<? extends String>, List<? extends String>, DiffUtil.DiffResult>() {
+                new DiffCalculator<String>() {
                     @Override
-                    public DiffUtil.DiffResult invoke(final List<? extends String> strings, final List<? extends String> strings2) {
+                    public DiffUtil.DiffResult getDiffResult(final List<String> oldList, final List<String> newList) {
                         return DiffUtil.calculateDiff(new DiffUtil.Callback() {
                             @Override
                             public int getOldListSize() {
-                                return strings.size();
+                                return oldList.size();
                             }
 
                             @Override
                             public int getNewListSize() {
-                                return strings2.size();
+                                return newList.size();
                             }
 
                             @Override
                             public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                                return strings.get(oldItemPosition).equals(strings2.get(newItemPosition));
+                                return oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
                             }
 
                             @Override
@@ -76,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         List<String> strings = Arrays.asList("Harry Potter", "Ron Weasley", "Hermione Granger", "Rubeus Hagrid");
-                        Collections.sort(strings);
+                        Collections.shuffle(strings);
                         adapter.setList(strings);
                     }
                 },
