@@ -1,10 +1,11 @@
 package com.blacklenspub.rvlistadapter;
 
-import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public interface DiffCalculator<T> {
-    DiffUtil.DiffResult getDiffResult(@NonNull List<T> oldList, @NonNull List<T> newList);
+    DiffUtil.DiffResult getDiffResult(@NotNull List<T> oldList, @NotNull List<T> newList);
 }

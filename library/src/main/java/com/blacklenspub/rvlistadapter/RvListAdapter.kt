@@ -47,4 +47,16 @@ abstract class RvListAdapter<T : Any, VH : ItemViewHolder<T, VH>> @JvmOverloads 
     }
 
     abstract fun onBindViewHolder(holder: VH, position: Int, item: T)
+
+    fun add(item: T) {
+        list += item
+    }
+
+    fun addAll(items: Collection<T>) {
+        list += items
+    }
+
+    fun addAll(vararg items: T) {
+        list += items
+    }
 }
