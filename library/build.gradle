@@ -1,6 +1,22 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
+apply plugin: 'com.novoda.bintray-release'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.4.0'
+    }
+}
+publish {
+    userOrg = 'blacklenspub'
+    groupId = 'com.blacklenspub'
+    artifactId = 'rvlistadapter'
+    publishVersion = '0.0.7'
+    desc = 'A RecyclerView.Adapter with OnItemClick support'
+    website = 'https://github.com/Black-Lens/RvListAdapter'
+}
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
