@@ -6,7 +6,7 @@ But sometimes you don't need all those functionalties they offer and you are tir
 
 ##Features
 - Built-in `List<T>`
-- Built-in `onItemClickListener<T,VH>`
+- Built-in `onItemClickListener`
 - `DiffUtil` support
 
 ##Download
@@ -14,9 +14,9 @@ soon
 
 ##Guide
 
-###ViewHolder
-A view holder must be extended from `ItemViewHolder<T,VH>`.
-`ItemViewHolder<T,VH>` has a field `item` holding your item of type T.
+###Creating ViewHolder
+You would extend your ViewHolder from `ItemViewHolder<T,VH>`.
+`ItemViewHolder<T,VH>` has a field `item` holding your item of type `T`.
 `VH` is the type of your concrete implementation of ItemViewHolder.
 There is a handy method `callOnClick(View)` to notify your OnItemClickListener of any child view clicked.
 
@@ -55,14 +55,8 @@ class StudentHolder extends ItemViewHolder<Student, StudentHolder> {
 }
 ```
 
-###Adapter
-You override `onCreateViewHolder(ViewGroup parent, int viewType, LayoutInflater inflater)` like you always do but you also get a LayoutInflater for easy inflating.
-`onBindViewHolder(StudentHolder holder, int position, T item)` is the same and you also get your item T.
-Now, the constructor is a little bit confusing, it accepts 3 parameters a `List<T>`, an `OnItemClickListener<T,VH>` and a `DiffCalculator`.
-A `List<T>` is an initial list of your items.
-An `OnItemClickListener<T,VH>` is how you listen for click events, leave it null if you don't want to.
-A `DiffCalculator` is an interface which has only one method `getDiffResult(List<T> oldList, List<T> newList)`.
-Basically you have to return a DiffUtil.DiffResult based on oldList and newList and the RecyclerView will animate the view for you. Leave it null if you just want a simple `notifyDatasetChanged()`.
+###Creating Adapter
+You override `onCreateViewHolder(ViewGroup parent, int viewType, LayoutInflater inflater)` and `onBindViewHolder(StudentHolder holder, int position, T item)` like you always do but with extra handy parameters.
 
 ```java
 public class StudentAdapter extends RvListAdapter<Student, StudentAdapter.StudentHolder> {
@@ -85,4 +79,73 @@ public class StudentAdapter extends RvListAdapter<Student, StudentAdapter.Studen
 }
 ```
 
+Now, the constructor is a little bit confusing, it accepts 3 parameters a `List<T>`, an `OnItemClickListener<T,VH>` and a `DiffCalculator`.
+- A `List<T>` is an initial list of your items.
+- An `OnItemClickListener<T,VH>` is how you listen for click events, leave it null if you don't want to.
+- A `DiffCalculator` is an interface which has only one method `getDiffResult(List<T> oldList, List<T> newList)`.
+Basically you have to return a `DiffUtil.DiffResult` based on oldList and newList and the RecyclerView will animate the view for you. Leave it null if you just want a simple `notifyDatasetChanged()`.
+
 ###How to use
+Let's put all of them together.
+
+```java
+class StudentDiffCalculator implements DiffCalculator<Student> {
+    @Override
+    public DiffUtil.DiffResult getDiffResult(@NotNull final List<Student> oldList, @NotNull final List<Student> newList) {
+        return DiffUtil.calculateDiff(new DiffUtil.Callback() {
+            @Override
+            public int getOldListSize() {
+                return oldList.size();
+            }
+
+            @Override
+            public int getNewListSize() {
+                return newList.size();
+            }
+
+            @Override
+            public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                return oldList.get(oldItemPosition).id == newList.get(newItemPosition).id;
+            }
+
+            @Override
+            public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                Student oldStudent = oldList.get(oldItemPosition);
+                Student newStudent = newList.get(newItemPosition);
+                if (oldStudent.name.equals(newStudent.name)) {
+                    return false;
+                }
+                if (oldStudent.house.equals(newStudent.house)) {
+                    return false;
+                }
+                return true;
+            }
+        });
+    }
+}
+
+StudentAdapter adapter = new StudentAdapter(
+    getInitialStudents(),
+    new OnItemClickListener<Student, StudentAdapter.StudentHolder>() {
+        @Override
+        public void onItemClick(@NotNull View view, int position, @NotNull StudentAdapter.StudentHolder holder, @NotNull Student item) {
+            String msg = "";
+            if (view == holder.tvName) { //identify a clicked view
+                msg = item.name;
+            } else if (view == holder.tvHouse) {
+                msg = item.house;
+            } else if (view == holder.itemView) {
+                msg = "Student ID: " + item.id;
+            }
+            Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+        }
+    },
+    new StudentDiffCalculator()
+);
+
+adapter.add(getAStudent()); //add an item
+
+adapter.addAll(getMoreStudent()); //add a collection of items
+
+adapter.setList(getAWholeNewListOfStudent()); //replace a list
+```
