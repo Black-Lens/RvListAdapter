@@ -142,10 +142,16 @@ StudentAdapter adapter = new StudentAdapter(
     },
     new StudentDiffCalculator()
 );
+```
 
+###Add items
+There are 3 methods for this. Call any of them and it will automatically call `notifyDatasetChanged()` or `DiffCalculator.getDiffResult()` for you.
+```java
 adapter.add(getAStudent()); //add an item
 
 adapter.addAll(getMoreStudent()); //add a collection of items
 
 adapter.setList(getAWholeNewListOfStudent()); //replace a list
 ```
+
+Take a look at the sample project if this guide confuses you (sorry for that).
