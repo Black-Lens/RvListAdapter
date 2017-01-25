@@ -7,12 +7,9 @@ import android.view.ViewGroup
 import kotlin.properties.Delegates
 
 abstract class ItemViewHolder<T : Any, VH>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     lateinit var item: T
     var onClick: OnItemClickListener<T, VH>? = null
-
-    init {
-        itemView.setOnClickListener { callOnClick(it) }
-    }
 
     fun callOnClick(view: View) {
         onClick?.onItemClick(view, adapterPosition, this@ItemViewHolder as VH, item)
@@ -35,9 +32,13 @@ abstract class RvListAdapter<T : Any, VH : ItemViewHolder<T, VH>> @JvmOverloads 
 
     override fun getItemCount(): Int = list.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH = onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.context)).apply {
-        onClick = onItemClick
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH =
+            onCreateViewHolder(parent, viewType, LayoutInflater.from(parent.context)).apply {
+                onItemClick?.let {
+                    onClick = onItemClick
+                    itemView.setOnClickListener { callOnClick(it) }
+                }
+            }
 
     abstract fun onCreateViewHolder(parent: ViewGroup, viewType: Int, inflater: LayoutInflater): VH
 

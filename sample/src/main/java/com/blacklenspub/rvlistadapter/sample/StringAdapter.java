@@ -39,12 +39,6 @@ public class StringAdapter extends RvListAdapter<String, StringAdapter.StringHol
 
         StringHolder(@NonNull View itemView) {
             super(itemView);
-            text1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    callOnClick(view);
-                }
-            });
         }
     }
 }
