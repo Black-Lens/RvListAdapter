@@ -16,7 +16,15 @@ Let RvListAdapter helps you.
 
 ##Download
 ```gradle
-compile 'com.blacklenspub:rvlistadapter:1.0.0'
+//build.gradle
+
+repositories {
+    jcenter()
+}
+dependencies {
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.blacklenspub:rvlistadapter:1.1.0'
+}
 ```
 
 ##How to use
@@ -175,13 +183,17 @@ StudentAdapter adapter = new StudentAdapter(
 ```
 
 ###Manipulate items
-There are 3 methods for this. There's no need to call `notifyDataSetChanged()` afterwards.
 ```java
-adapter.add(getAStudent()); //add an item
+adapter.add(new Student(...)); //add an item
 
 adapter.addAll(getMoreStudent()); //add a collection of items
 
 adapter.setList(getAWholeNewListOfStudent()); //replace a list
+
+adapter.remove(aStudent); //remove an item
+
+adapter.removeAll(theseStudents); //remove a collection of items
 ```
+There's no need to call `notifyDataSetChanged()` afterwards.
 
 Take a look at the sample project if this guide confuses you (sorry for that).
