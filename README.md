@@ -1,8 +1,10 @@
-# RvListAdapter
+# RvListAdapter [ ![Download](https://api.bintray.com/packages/blacklenspub/maven/rvlistadapter/images/download.svg) ](https://bintray.com/blacklenspub/maven/rvlistadapter/_latestVersion)
 This mini-library is an another attempt to simplify how you create a RecyclerView.Adapter.
 It is written in Kotlin with Java in mind.
 I know there are tons of RecyclerView.Adpater out there solving different problems.
 But sometimes you don't need all those functionalties they offer and you are tired of writing all the boilerplate code again and again. Let RvListAdapter helps you.
+
+<img src="https://cloud.githubusercontent.com/assets/20502146/22319779/79ceb91a-e3b8-11e6-8ef1-cdbf32887ff3.gif" width="360">
 
 ##Features
 - Built-in `List<T>`
@@ -10,7 +12,9 @@ But sometimes you don't need all those functionalties they offer and you are tir
 - `DiffUtil` support
 
 ##Download
-soon
+```gradle
+compile 'com.blacklenspub:rvlistadapter:1.0.0'
+```
 
 ##Guide
 
@@ -144,7 +148,7 @@ StudentAdapter adapter = new StudentAdapter(
 );
 ```
 
-###Add items
+###Add/replace items
 There are 3 methods for this. Call any of them and it will automatically call `notifyDatasetChanged()` or `DiffCalculator.getDiffResult()` for you.
 ```java
 adapter.add(getAStudent()); //add an item
