@@ -1,8 +1,11 @@
 # RvListAdapter [ ![Download](https://api.bintray.com/packages/blacklenspub/maven/rvlistadapter/images/download.svg) ](https://bintray.com/blacklenspub/maven/rvlistadapter/_latestVersion)
 This mini-library is an another attempt to simplify how you create a RecyclerView.Adapter.
 It is written in Kotlin with Java in mind.
+
 I know there are tons of RecyclerView.Adpater out there solving different problems.
-But sometimes you don't need all those functionalties they offer and you are tired of writing all the boilerplate code again and again. Let RvListAdapter helps you.
+But sometimes you don't need all those functionalties they offer and you are tired of writing all the boilerplate code again and again.
+
+Let RvListAdapter helps you.
 
 <img src="https://cloud.githubusercontent.com/assets/20502146/22319779/79ceb91a-e3b8-11e6-8ef1-cdbf32887ff3.gif" width="360">
 
@@ -16,13 +19,13 @@ But sometimes you don't need all those functionalties they offer and you are tir
 compile 'com.blacklenspub:rvlistadapter:1.0.0'
 ```
 
-##Guide
+##How to use
 
 ###Creating ViewHolder
 You would extend your ViewHolder from `ItemViewHolder<T,VH>`.
-`ItemViewHolder<T,VH>` has a field `item` holding your item of type `T`.
-`VH` is the type of your concrete implementation of ItemViewHolder.
-There is a handy method `callOnClick(View)` to notify your OnItemClickListener of any child view clicked.
+A generic parameter `T` would be the type of your item. A `VH` is the type of your concrete implementation of the `ItemViewHolder` - it is weired but it has to be there to support `OnItemClickListener<T,VH>`.
+
+In case you have multiple clickable views in your layout, there is a handy method `callOnClick(View)` to notify your `OnItemClickListener` of any child view clicked. But if you only interested in a whole itemView click event, you can ignore this - it has been done for you.
 
 ```java
 public class Student {
@@ -83,14 +86,37 @@ public class StudentAdapter extends RvListAdapter<Student, StudentAdapter.Studen
 }
 ```
 
-Now, the constructor is a little bit confusing, it accepts 3 parameters a `List<T>`, an `OnItemClickListener<T,VH>` and a `DiffCalculator`.
-- A `List<T>` is an initial list of your items.
+Now, the constructor is a little bit confusing, it accepts 3 parameters - a `List<T>`, an `OnItemClickListener<T,VH>` and a `DiffCalculator`.
+- A `List<T>` is an initial list of your items. A null indicates an empty list.
 - An `OnItemClickListener<T,VH>` is how you listen for click events, leave it null if you don't want to.
-- A `DiffCalculator` is an interface which has only one method `getDiffResult(List<T> oldList, List<T> newList)`.
-Basically you have to return a `DiffUtil.DiffResult` based on oldList and newList and the RecyclerView will animate the view for you. Leave it null if you just want a simple `notifyDatasetChanged()`.
+- A `DiffCalculator<T>` is there to support `DiffUtil`. Leave it null if you just want a simple `notifyDataSetChanged()`.
 
-###How to use
-Let's put all of them together.
+###OnItemClickListener
+
+Let's have a look at the interface `OnItemCliclListener<T,VH>`
+
+```java
+public interface OnItemClickListener<T, VH> {
+    void onItemClick(@NotNull View view, int position, @NotNull VH holder, @NotNull T item);
+}
+```
+- `View view` is a view receiving a click event.
+- `int position` is basically a `getAdapterPosition()`
+- `VH holder` is an instance of your ViewHolder.
+- `T item` is an item in the list at that `position`.
+
+###DiffCalculator
+
+```java
+public interface DiffCalculator<T> {
+    DiffUtil.DiffResult getDiffResult(@NotNull List<T> oldList, @NotNull List<T> newList);
+}
+```
+Basically you have to return a `DiffUtil.DiffResult` based on oldList and newList. Then the RvListAdapter will dispatch the update accordingly everytime the items changed. See [DiffUtil](https://developer.android.com/reference/android/support/v7/util/DiffUtil.html).
+
+There is a `SimpleDiffCalculator<T>` which simply check the lists' size and `T.equals`.
+
+###Put it all together
 
 ```java
 class StudentDiffCalculator implements DiffCalculator<Student> {
@@ -148,8 +174,8 @@ StudentAdapter adapter = new StudentAdapter(
 );
 ```
 
-###Add/replace items
-There are 3 methods for this. Call any of them and it will automatically call `notifyDatasetChanged()` or `DiffCalculator.getDiffResult()` for you.
+###Manipulate items
+There are 3 methods for this. There's no need to call `notifyDataSetChanged()` afterwards.
 ```java
 adapter.add(getAStudent()); //add an item
 
