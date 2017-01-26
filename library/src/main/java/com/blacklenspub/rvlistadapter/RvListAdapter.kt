@@ -60,4 +60,17 @@ abstract class RvListAdapter<T : Any, VH : ItemViewHolder<T, VH>> @JvmOverloads 
     fun addAll(vararg items: T) {
         list += items
     }
+
+    fun remove(item: T) {
+        list -= item
+    }
+
+    fun removeAll(items: Collection<T>) {
+        list -= items
+    }
+
+    fun removeAll(vararg item: T) {
+        list -= item
+    }
+
 }
